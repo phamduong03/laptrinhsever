@@ -1,75 +1,68 @@
-var http = require('http');
-var url = require('url');
-var fs = require('fs');
+var express = require("express");
+var expresshandlebars = require("express-handlebars");
+var app = express();
+var url = require("url");
+var fs = require("fs");
+app.engine(
+  "handlebars",
+  expresshandlebars({
+    layoutsDir: __dirname + "/views/layouts",
+    defaultLayout: "main",
+  })
+);
 
+app.use(express.static("views"));
 
-http.createServer(function(require, response){
-    response.writeHead(200,{'Content-Type':'text/html'});
+app.set("view engine", "handlebars");
+// hhtp get
+app.get("/", function (req, res) {
+  res.render("index");
+});
+app.get("/login", function (req, res) {
+  res.render("Login");
+});
 
-
-var url = require.url;
-
-if(url =='/'){
-    fs.readFile('index.html',function(err,data){
-
-        if(err == null){
-         response.write(data);
-         response.end();
-        }else{
-            response.end(err);
-        }
-    });
-
-}else if(url =='/insert'){
-    fs.writeFile('test.txt','/n Ghi vao file thu xem',function(err,data){
-  if(err == null){
-      response.end("Ghi thanh cong");
-  }else{
-      response.end(err);
-  }
-
-    });
-
+app.get("/signup", function (req, res) {
+  res.render("Signup");
+});
+app.get("/fs", function (req, res) {
+  res.render("File");
+});
+app.get("/insert", function (req, res) {
+  fs.writeFile("test.txt", "/n Ghi vao file thu xem", function (err, data) {
+    if (err == null) {
+      res.send("Ghi thanh cong");
+    } else {
+      res.send(err);
     }
-    else if(url =='/append'){
-        fs.appendFile('test.txt','/n Ghi vao file thu xem 2',function(err){
-            if(err == null){
-                response.end("Ghi thanh cong");
-            }else{
-                response.end(err);
-            }
+  });
+});
+app.get("/append", function (req, res) {
+  fs.appendFile("test.txt", "\n Ghi vao file thu xem 2", function (err) {
+    if (err == null) {
+      res.send("Ghi thanh cong");
+    } else {
+      res.send(err);
+    }
+  });
+});
+app.get("/unlink", function (req, res) {
+  fs.unlink("test.txt", function (err) {
+    if (err == null) {
+      res.send("Xoa thanh cong");
+    } else {
+      res.send(err);
+    }
+  });
+});
+app.get("/rename", function (req, res) {
+  fs.rename("test.txt", "test2.txt", function (err) {
+    if (err == null) {
+      res.send("Rename thanh cong");
+    } else {
+      res.send(err);
+    }
+  });
+});
 
-              });
-        }
-        else if(url =='/unlink'){
-            fs.unlink('test.txt',function(err){
-                if(err == null){
-                    response.end("Xoa thanh cong");
-                }else{
-                    response.end(err);
-                }
-
-                  });
-            }
-
-
- else if(url =='/rename'){
-                fs.rename('test.txt','test2.txt',function(err){
-                    if(err == null){
-                        response.end("rename thanh cong");
-                    }else{
-                        response.end(err);
-                    }
-                      });
-                }
-
-
-else if(url =='/Login'){
-response.end("chao mung ban den tinder");
-}else{
-    response.end("404 not found");
-}
-
-// response.end(url);
-
-}).listen(process.env.PORT || '3000');
+app.listen(process.env.PORT || "3300");
